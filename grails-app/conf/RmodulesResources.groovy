@@ -47,4 +47,7 @@ modules = {
     waterfall {
         resource url:"/js/plugin/Waterfall.js"
     }
+    oncoprint {
+        resource url:"/js/plugin/Oncoprint.js"
+    }
 }
