@@ -48,6 +48,14 @@ modules = {
         resource url:"/js/plugin/Waterfall.js"
     }
     oncoprint {
+        resource url:"/js/oncoprint/jquery.min.js"
+        resource url:"/js/oncoprint/jquery-ui.min.js"
+        resource url:"/js/oncoprint/chosen.jquery.js"
+        resource url:"/js/oncoprint/jquery.qtip.min.js"
+        resource url:"/js/oncoprint/underscore-min.js"
+        resource url:"/js/oncoprint/backbone-min.js"
+        resource url:"/js/oncoprint/d3.min.js"
+        resource url:"/js/oncoprint/Models.js"
         resource url:"/js/plugin/Oncoprint.js"
     }
 }

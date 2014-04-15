@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component
 class Oncoprint extends HighDimensionalOnlyJob {
 
 
+    @Override
     protected List<Step> prepareSteps() {
         List<Step> steps = []
 
@@ -27,16 +28,6 @@ class Oncoprint extends HighDimensionalOnlyJob {
                 analysisConstraints: analysisConstraints)
 
         steps << openResultSetStep
-
-        steps << createDumpHighDimensionDataStep { -> openResultSetStep.results }
-
-        steps << new RCommandsStep(
-                temporaryDirectory: temporaryDirectory,
-                scriptsDirectory: scriptsDirectory,
-                rStatements: RStatements,
-                studyName: studyName,
-                params: params,
-                extraParams: [inputFileName: AbstractDumpStep.DEFAULT_OUTPUT_FILE_NAME])
 
         steps
     }
