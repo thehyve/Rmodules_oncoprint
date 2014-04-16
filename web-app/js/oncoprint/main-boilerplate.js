@@ -61,8 +61,9 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
                 oncoprint = Oncoprint(document.getElementById('oncoprint_body'), {
                     geneData: data.toJSON(),
                     genes: genes,
-                    legend: document.getElementById('oncoprint_legend')
-                });
+                    legend: document.getElementById('oncoprint_legend'),
+                    width: $('#oncoprint').width() + 50
+            });
                 outer_loader_img.hide();
                 $('#oncoprint #everything').show();
 
