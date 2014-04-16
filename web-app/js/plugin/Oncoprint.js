@@ -47,6 +47,7 @@ function loadOncoprintOutput() {
         getRppaScoreThreshold: function() { return '2.0'; }
     };
 
+    // This lets require.js execute the oncoprint code, starting at main-boilerplate.js
     var s = document.createElement('script');
     s.setAttribute('data-main', pageInfo.basePath + '/js/oncoprint/main-boilerplate.js');
     s.type = 'text/javascript';

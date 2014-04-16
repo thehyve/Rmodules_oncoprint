@@ -55,7 +55,10 @@ modules = {
         resource url:"/js/oncoprint/underscore-min.js"
         resource url:"/js/oncoprint/backbone-min.js"
         resource url:"/js/oncoprint/d3.min.js"
+
         resource url:"/js/oncoprint/Models.js"
+        // the remaining oncoprint libraries are loaded through require.js
+
         resource url:"/js/plugin/Oncoprint.js"
     }
 }
