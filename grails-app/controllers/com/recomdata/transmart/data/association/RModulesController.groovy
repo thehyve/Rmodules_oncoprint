@@ -147,14 +147,14 @@ class RModulesController {
         quartzScheduler.scheduleJob(jobDetail, trigger)
     }
 
-    private AnalysisConstraints createAnalysisConstraints(Map params) {
+    public static AnalysisConstraints createAnalysisConstraints(Map params) {
         Map map = validateParamAnalysisConstraints(params) as Map
         map["data_type"] = lookup[map["data_type"]]
         map = massageConstraints map
         new AnalysisConstraints(map: map)
     }
 
-    private Map massageConstraints(Map analysisConstraints) {
+    private static Map massageConstraints(Map analysisConstraints) {
         analysisConstraints["dataConstraints"].each { constraintType, value ->
             if (constraintType == 'search_keyword_ids') {
                 analysisConstraints["dataConstraints"][constraintType] = [ keyword_ids: value ]
@@ -168,7 +168,7 @@ class RModulesController {
         analysisConstraints
     }
 
-    private JSONElement validateParamAnalysisConstraints(Map params) {
+    private static JSONElement validateParamAnalysisConstraints(Map params) {
         if (!params[PARAM_ANALYSIS_CONSTRAINTS]) {
             throw new InvalidArgumentsException("No parameter $PARAM_ANALYSIS_CONSTRAINTS")
         }

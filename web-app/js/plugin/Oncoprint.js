@@ -77,6 +77,8 @@ OncoprintView.prototype.submit_job = function () {
         if (formParams) { // if formParams is not null
             //submitJob(formParams);
 
+            window.formParams = formParams;
+
             var url = pageInfo.basePath + "/oncoprint/oncoprintOut";
             //Set the results DIV to use the URL from the job.
             Ext.get('analysisOutput').load({url: url, callback: loadOncoprintOutput});
