@@ -49,14 +49,7 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
         var geneDataColl = new GeneDataColl();
         geneDataColl.fetch({
             type: "GET",
-            data: window.formParams /*{
-                cancer_study_id: cancer_study_id_selected,
-                oql: $('#gene_list').val(),
-                case_list: cases,
-                geneticProfileIds: window.PortalGlobals.getGeneticProfiles(),
-                z_score_threshold: window.PortalGlobals.getZscoreThreshold(),
-                rppa_score_threshold: window.PortalGlobals.getRppaScoreThreshold()
-            }*/,
+            data: window.formParams,
             success: function(data) {
                 oncoprint = Oncoprint(document.getElementById('oncoprint_body'), {
                     geneData: data.toJSON(),

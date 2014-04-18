@@ -25,26 +25,7 @@ function loadOncoprintOutput() {
     window.genomic_profile_id_selected['coadread_tcga_pub_gistic']=1;
 
     window.PortalGlobals = {
-        getCancerStudyId: function() { return 'coadread_tcga_pub'},
-        getGenes: function() { return 'AURKA TP53'},  // raw gene list (as it is entered by the user, it MAY CONTAIN onco query language)
-        getGeneListString: function() {  // gene list WITHOUT onco query language
-            return 'AURKA TP53'
-        },
-        getCaseSetId: function() { return 'coadread_tcga_pub_3way_complete';},  //Id for user chosen standard case set
-        getCaseSetName: function() { return 'All Complete Tumors'},  //Name for user chose standard case set
-        getCaseIdsKey: function() { return '8970e414d494103c2b67131214493fd1'; },   //A key arrsigned to use build case set
-        getCases: function() { return ''; }, // list of queried case ids
-        getOqlString: (function() {     // raw gene list (as it is entered by the user, it may contain onco query language)
-            var oql = 'AURKA TP53'
-                .replace("&gt;", ">", "gm")
-                .replace("&lt;", "<", "gm")
-                .replace("&eq;", "=", "gm")
-                .replace(/[\r\n]/g, "\\n");
-            return function() { return oql; };
-        })(),
-        getGeneticProfiles: function() { return 'coadread_tcga_pub_mutations coadread_tcga_pub_mrna_median_Zscores coadread_tcga_pub_gistic'; },
-        getZscoreThreshold: function() { return '2.0'; },
-        getRppaScoreThreshold: function() { return '2.0'; }
+        getCases: function() { return ''; } // list of queried case ids
     };
 
     // This lets require.js execute the oncoprint code, starting at main-boilerplate.js
@@ -84,21 +65,6 @@ OncoprintView.prototype.submit_job = function () {
             Ext.get('analysisOutput').load({url: url, callback: loadOncoprintOutput});
             //Set the flag that says we run an analysis so we can warn the user if they navigate away.
             GLOBAL.AnalysisRun = true;
-
-            /*Ext.Ajax.request({
-                url: pageInfo.basePath+"/oncoprint/getData",
-                method: 'POST',
-                success: function(result, request){
-                    //Handle data export process
-                    //runJob(result, formParams);
-                    alert(result.responseText);
-                },
-                failure: function(result, request){
-                    Ext.Msg.alert('Status', 'Unable to create data export job.');
-                },
-                timeout: '1800000',
-                params: formParams
-            });*/
 
         }
     }
