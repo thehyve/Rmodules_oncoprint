@@ -137,11 +137,6 @@
 </script>
 
 
-<div style="margin-left:3;">
-    <p>Case Set: All Complete Tumors: All tumor samples that have mRNA, CNA and sequencing data (195 samples)</p>
-    <p>Altered in 125 (64%) of cases</p>
-</div>
-
 <img id="inner_loader_img" src="${resource(dir: 'images', file: 'ajax-loader.gif')}" style="display:none;">
 
 <div id="oncoprint_body"></div>
