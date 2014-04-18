@@ -41,7 +41,8 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
         var oncoprint;
 
         var cases = window.PortalGlobals.getCases();
-        var genes = window.PortalGlobals.getGeneListString().split(" ");
+        //TODO: look up genes from search_keyword_ids in analysisConstraints:
+        var genes = window.formParams.divIndependentVariablePathwayName.split(" ");
 
         var outer_loader_img = $('#oncoprint #outer_loader_img');
         var inner_loader_img = $('#oncoprint #inner_loader_img');
