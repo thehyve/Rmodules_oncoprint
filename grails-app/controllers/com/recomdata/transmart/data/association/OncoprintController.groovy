@@ -61,7 +61,7 @@ class OncoprintController {
                     oncoprintEntries << oncoprintEntry
                 }
             }
-
+            tabularResult.close()
         }
         render oncoprintEntries as JSON
     }
