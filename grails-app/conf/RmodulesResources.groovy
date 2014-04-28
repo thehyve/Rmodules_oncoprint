@@ -61,4 +61,7 @@ modules = {
 
         resource url:"/js/plugin/Oncoprint.js"
     }
+    histogram {
+        resource url:"/js/plugin/Histogram.js"
+    }
 }

@@ -120,6 +120,9 @@ class RModulesController {
             case 'oncoprint':
                 jsonResult = createJob(params, Oncoprint)
                 break
+            case 'histogram':
+                jsonResult = createJob(params, Histogram, false)
+                break
             default:
                 jsonResult = RModulesService.scheduleJob(
                         springSecurityService.principal.username, params)
