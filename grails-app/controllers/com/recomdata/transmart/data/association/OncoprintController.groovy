@@ -109,7 +109,7 @@ class OncoprintController {
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
             assayList.each { AssayColumn assayColumn ->
-                def value = row[assayColumn].getProbabilityOfAmplification()
+                def value = row[assayColumn].getCopyNumberState()
                 if (value == null) {
                     return
                 }
@@ -118,8 +118,20 @@ class OncoprintController {
                         gene: row.geneSymbol,
                         sample: assayColumn.patientInTrialId
                 ]
-                if (value > 0.2) {
-                    oncoprintEntry["cna"] = "AMPLIFIED"
+                switch (value) {
+                    case -1:
+                        //TODO: not sure if this is accurate:
+                        oncoprintEntry["cna"] = "HEMIZYGOUSLYDELETED"
+                        break
+                    case 0:
+                        oncoprintEntry["cna"] = "DIPLOID"
+                        break
+                    case 1:
+                        oncoprintEntry["cna"] = "GAINED"
+                        break
+                    case 2:
+                        oncoprintEntry["cna"] = "AMPLIFIED"
+                        break
                 }
 
                 oncoprintEntries << oncoprintEntry
