@@ -24,12 +24,11 @@ class OncoprintController {
 
     /* in */
     UserParameters userParams
-    HighDimensionDataTypeResource dataTypeResource
     AnalysisConstraints analysisConstraints
 
     /* out */
     Map<List<String>, TabularResult> results = [:]
-
+    List<Map> oncoprintEntries = []
 
     @Autowired
     HighDimensionResource highDimensionResource
@@ -44,39 +43,35 @@ class OncoprintController {
 
     def fetchGeneData = {
 
-        List<Map> oncoprintEntries = []
-
         userParams = new UserParameters(map: Maps.newHashMap(params))
         analysisConstraints = RModulesController.createAnalysisConstraints(params)
-        String dataType = analysisConstraints['data_type']
-        dataTypeResource = highDimensionResource.getSubResourceForType(dataType)
-        String projectionType = projectionLookup[dataType]
+
+        List<String> ontologyTerms = extractOntologyTerms()
+        TabularResult tabularResult;
 
         try {
-            List<String> ontologyTerms = extractOntologyTerms()
             extractPatientSets().eachWithIndex { resultInstanceId, index ->
                 ontologyTerms.each { ontologyTerm ->
-                    String seriesLabel = ontologyTerm.split('\\\\')[-1]
-                    List<String> keyList = ["S" + (index + 1), seriesLabel]
-                    results[keyList] = fetchSubset(resultInstanceId, ontologyTerm, projectionType)
+                    HighDimensionDataTypeResource dataTypeResource = getHighDimDataTypeResourceFromConcept(ontologyTerm)
+                    tabularResult = fetchSubset(resultInstanceId, ontologyTerm, dataTypeResource)
+
+                    String dataType = dataTypeResource.dataTypeName
+                    switch (dataType) {
+                    case 'mrna':
+                        processMrna(tabularResult, oncoprintEntries)
+                        break
+                    case 'acgh':
+                        processAcgh(tabularResult, oncoprintEntries)
+                        break
+                    }
+                    tabularResult.close()
                 }
             }
         } catch(Throwable t) {
-            results.values().each { it.close() }
+            tabularResult?.close()
             throw t
         }
 
-        results.each() { key, tabularResult ->
-            switch (dataType) {
-                case 'mrna':
-                    processMrna(tabularResult, oncoprintEntries)
-                    break
-                case 'acgh':
-                    processAcgh(tabularResult, oncoprintEntries)
-                    break
-            }
-            tabularResult.close()
-        }
         render oncoprintEntries as JSON
     }
 
@@ -89,20 +84,43 @@ class OncoprintController {
                     return
                 }
 
-                def oncoprintEntry = [
-                        gene: row.geneSymbol,
-                        sample: assayColumn.patientInTrialId
-                ]
+                def oncoprintEntry = getOrCreateOncoprintEntry(row.geneSymbol,
+                        assayColumn.patientInTrialId)
                 if (value > 1.0) {
                     oncoprintEntry["mrna"] = "UPREGULATED"
                 }
                 if (value < -1.0) {
                     oncoprintEntry["mrna"] = "DOWNREGULATED"
                 }
-
-                oncoprintEntries << oncoprintEntry
             }
         }
+    }
+
+    private Map getOrCreateOncoprintEntry(String geneSymbol, String sampleId) {
+        Map entry = oncoprintEntries.find( {
+            it.gene == geneSymbol && it.sample == sampleId
+        })
+        if (entry != null)
+            return entry
+        entry = [ gene: geneSymbol, sample: sampleId ]
+        oncoprintEntries << entry
+        return entry
+    }
+
+    private HighDimensionDataTypeResource getHighDimDataTypeResourceFromConcept(String conceptKey) {
+        def constraints = []
+
+        constraints << highDimensionResource.createAssayConstraint(
+                AssayConstraint.DISJUNCTION_CONSTRAINT,
+                subconstraints: [
+                        (AssayConstraint.ONTOLOGY_TERM_CONSTRAINT):
+                                [concept_key: conceptKey]])
+
+        def assayMultiMap = highDimensionResource.
+                getSubResourcesAssayMultiMap(constraints)
+
+        HighDimensionDataTypeResource dataTypeResource = assayMultiMap.keySet()[0]
+        return dataTypeResource
     }
 
     private void processAcgh(TabularResult tabularResult, List<Map> oncoprintEntries) {
@@ -114,10 +132,8 @@ class OncoprintController {
                     return
                 }
 
-                def oncoprintEntry = [
-                        gene: row.geneSymbol,
-                        sample: assayColumn.patientInTrialId
-                ]
+                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
+                        assayColumn.patientInTrialId)
                 switch (value) {
                     case -1:
                         //TODO: not sure if this is accurate:
@@ -133,8 +149,6 @@ class OncoprintController {
                         oncoprintEntry["cna"] = "AMPLIFIED"
                         break
                 }
-
-                oncoprintEntries << oncoprintEntry
             }
         }
     }
@@ -154,7 +168,8 @@ class OncoprintController {
         analysisConstraints.assayConstraints.remove("patient_set").grep()
     }
 
-    private TabularResult fetchSubset(Integer patientSetId, String ontologyTerm, String projectionType) {
+    private TabularResult fetchSubset(Integer patientSetId, String ontologyTerm,
+                                      HighDimensionDataTypeResource dataTypeResource) {
 
         List<DataConstraint> dataConstraints = analysisConstraints['dataConstraints'].
                 collect { String constraintType, values ->
@@ -180,6 +195,7 @@ class OncoprintController {
                         AssayConstraint.ONTOLOGY_TERM_CONSTRAINT,
                         concept_key: ontologyTerm))
 
+        String projectionType = projectionLookup[dataTypeResource.dataTypeName]
         Projection projection = dataTypeResource.createProjection([:], projectionType)
 
         dataTypeResource.retrieveData(assayConstraints, dataConstraints, projection)
