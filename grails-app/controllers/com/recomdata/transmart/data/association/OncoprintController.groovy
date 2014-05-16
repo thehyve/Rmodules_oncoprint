@@ -11,6 +11,7 @@ import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.HighDimensionResource
+import org.transmartproject.core.dataquery.highdim.acgh.CopyNumberState
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
@@ -135,17 +136,16 @@ class OncoprintController {
                 def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
                         assayColumn.patientInTrialId)
                 switch (value) {
-                    case -1:
-                        //TODO: not sure if this is accurate:
-                        oncoprintEntry["cna"] = "HEMIZYGOUSLYDELETED"
+                    case CopyNumberState.LOSS:
+                        oncoprintEntry["cna"] = "LOSS"
                         break
-                    case 0:
+                    case CopyNumberState.NORMAL:
                         oncoprintEntry["cna"] = "DIPLOID"
                         break
-                    case 1:
+                    case CopyNumberState.GAIN:
                         oncoprintEntry["cna"] = "GAINED"
                         break
-                    case 2:
+                    case CopyNumberState.AMPLIFICATION:
                         oncoprintEntry["cna"] = "AMPLIFIED"
                         break
                 }
