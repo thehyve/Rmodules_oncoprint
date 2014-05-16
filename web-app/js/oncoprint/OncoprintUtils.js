@@ -185,8 +185,7 @@ define("OncoprintUtils", (function() {
                 "AMPLIFIED": 0,
                 "GAINED": 1,
                 "DIPLOID": 2,
-                "HEMIZYGOUSLYDELETED": 3,
-                "HOMODELETED": 4
+                "LOSS": 3
             };
 
             to_return.cna = to_return.cna.sort(function(x, y) {
@@ -449,8 +448,7 @@ define("OncoprintUtils", (function() {
         AMPLIFIED: colors.red,
         GAINED: '#FFB6C1',
         DIPLOID: '#D3D3D3',
-        HEMIZYGOUSLYDELETED: '#8FD8D8',
-        HOMODELETED: '#0000FF'
+        LOSS: '#8FD8D8'
     };
 
     // puts a legend in the div according to range for each datatype.  If the
@@ -491,8 +489,7 @@ define("OncoprintUtils", (function() {
                 AMPLIFIED: "Amplification",
                 GAINED: "Gain",
                 DIPLOID: "Diploid",
-                HEMIZYGOUSLYDELETED: "Heterozygous Deletion",
-                HOMODELETED: "Homozygous Deletion"
+                LOSS: "Loss"
             },
             mrna: {
                 UPREGULATED: "mRNA Upregulation",

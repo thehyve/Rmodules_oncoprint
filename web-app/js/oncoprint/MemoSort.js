@@ -15,7 +15,7 @@ define("MemoSort", function() {
         // compares two objects that have gene data (cna, mutation, mrna, rppa).
         // Returns a number that indicates the order.
         var comp_genes = function(attr1, attr2) {
-            var cna_order = {AMPLIFIED:4, HOMODELETED:3, GAINED:2, HEMIZYGOUSLYDELETED:1, DIPLOID: 0, undefined: 0},
+            var cna_order = {AMPLIFIED:4, GAINED:2, LOSS:1, DIPLOID: 0, undefined: 0},
                 regulated_order = {UPREGULATED: 2, DOWNREGULATED: 1, undefined: 0},
                 mutation_order_f = function(m) { return m === undefined ? 0 : (/fusion($|,)/i.test(m)?2:1); };
 
