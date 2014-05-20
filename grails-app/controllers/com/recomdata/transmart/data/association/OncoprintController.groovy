@@ -20,7 +20,8 @@ class OncoprintController {
 
     final static Map<String, String> projectionLookup = [
             "mrna":     "zscore",
-            "acgh":     "acgh_values"
+            "acgh":     "acgh_values",
+            "protein":  "zscore"
     ]
 
     /* in */
@@ -56,13 +57,15 @@ class OncoprintController {
                     HighDimensionDataTypeResource dataTypeResource = getHighDimDataTypeResourceFromConcept(ontologyTerm)
                     tabularResult = fetchSubset(resultInstanceId, ontologyTerm, dataTypeResource)
 
-                    String dataType = dataTypeResource.dataTypeName
-                    switch (dataType) {
+                    switch (dataTypeResource.dataTypeName) {
                     case 'mrna':
                         processMrna(tabularResult, oncoprintEntries)
                         break
                     case 'acgh':
                         processAcgh(tabularResult, oncoprintEntries)
+                        break
+                    case 'protein':
+                        processProtein(tabularResult, oncoprintEntries)
                         break
                     }
                     tabularResult.close()
@@ -85,7 +88,7 @@ class OncoprintController {
                     return
                 }
 
-                def oncoprintEntry = getOrCreateOncoprintEntry(row.geneSymbol,
+                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
                         assayColumn.patientInTrialId)
                 if (value > 1.0) {
                     oncoprintEntry["mrna"] = "UPREGULATED"
@@ -148,6 +151,27 @@ class OncoprintController {
                     case CopyNumberState.AMPLIFICATION:
                         oncoprintEntry["cna"] = "AMPLIFIED"
                         break
+                }
+            }
+        }
+    }
+
+    private void processProtein(TabularResult tabularResult, List<Map> oncoprintEntries) {
+        def assayList = tabularResult.indicesList
+        tabularResult.each { DataRow row ->
+            assayList.each { AssayColumn assayColumn ->
+                def value = row[assayColumn] as Double
+                if (value == null) {
+                    return
+                }
+
+                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
+                        assayColumn.patientInTrialId)
+                if (value > 1.0) {
+                    oncoprintEntry["rppa"] = "UPREGULATED"
+                }
+                if (value < -1.0) {
+                    oncoprintEntry["rppa"] = "DOWNREGULATED"
                 }
             }
         }
