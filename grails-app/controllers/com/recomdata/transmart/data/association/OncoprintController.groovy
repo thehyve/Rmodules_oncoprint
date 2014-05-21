@@ -55,7 +55,7 @@ class OncoprintController {
             extractPatientSets().eachWithIndex { resultInstanceId, index ->
                 ontologyTerms.each { ontologyTerm ->
                     HighDimensionDataTypeResource dataTypeResource = getHighDimDataTypeResourceFromConcept(ontologyTerm)
-                    tabularResult = fetchSubset(resultInstanceId, ontologyTerm, dataTypeResource)
+                    tabularResult = fetchData(resultInstanceId, ontologyTerm, dataTypeResource)
 
                     switch (dataTypeResource.dataTypeName) {
                     case 'mrna':
@@ -192,7 +192,7 @@ class OncoprintController {
         analysisConstraints.assayConstraints.remove("patient_set").grep()
     }
 
-    private TabularResult fetchSubset(Integer patientSetId, String ontologyTerm,
+    private TabularResult fetchData(Integer patientSetId, String ontologyTerm,
                                       HighDimensionDataTypeResource dataTypeResource) {
 
         List<DataConstraint> dataConstraints = analysisConstraints['dataConstraints'].
