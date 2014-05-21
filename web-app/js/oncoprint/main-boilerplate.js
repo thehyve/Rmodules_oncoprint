@@ -40,9 +40,8 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
 
         var oncoprint;
 
-        var cases = window.PortalGlobals.getCases();
-        //TODO: look up genes from search_keyword_ids in analysisConstraints:
-        var genes = window.formParams.divIndependentVariablePathwayName.split(" ");
+        var cases = [];
+        var genes = [];
 
         var outer_loader_img = $('#oncoprint #outer_loader_img');
         var inner_loader_img = $('#oncoprint #inner_loader_img');
@@ -52,16 +51,29 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
             type: "GET",
             data: window.formParams,
             success: function(data) {
+                var geneData = data.toJSON();
+
+                // Collect genes and cases (samples) from the data
+                geneData.forEach(function(entry) {
+                    if (genes.indexOf(entry.gene) == -1) {
+                        genes.push(entry.gene);
+                    }
+                    if (cases.indexOf(entry.sample) == -1) {
+                        cases.push(entry.sample);
+                    }
+                })
+
+                // Set up oncoprint
                 oncoprint = Oncoprint(document.getElementById('oncoprint_body'), {
-                    geneData: data.toJSON(),
+                    geneData: geneData,
                     genes: genes,
                     legend: document.getElementById('oncoprint_legend'),
                     width: $('#oncoprint').width() + 50
-            });
+                });
                 outer_loader_img.hide();
                 $('#oncoprint #everything').show();
 
-                oncoprint.sortBy(sortBy.val(), cases.split(" "));
+                oncoprint.sortBy(sortBy.val(), cases);
 
                 zoom = reset_zoom();
             }
@@ -107,7 +119,7 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
                     legend: document.getElementById('oncoprint_legend')
                 });
 
-                oncoprint.sortBy(sortBy.val(), cases.split(" "));
+                oncoprint.sortBy(sortBy.val(), cases);
 
                 // disable the option to sort by clinical data
                 $(sortBy.add('option[value="clinical"]')[1]).prop('disabled', true);
@@ -119,7 +131,7 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
                     data: {
                         cancer_study_id: cancer_study_id_selected,
                         attribute_id: clinicalAttribute.attr_id,
-                        case_list: cases
+                        case_list: cases.join(" ")
                     },
                     success: function(response) {
                         inner_loader_img.hide();
@@ -132,7 +144,7 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
                             legend: document.getElementById('oncoprint_legend')
                         });
 
-                        oncoprint.sortBy(sortBy.val(), cases.split(" "));
+                        oncoprint.sortBy(sortBy.val(), cases);
 
                         // enable the option to sort by clinical data
                         $(sortBy.add('option[value="clinical"]')[1]).prop('disabled', false);
@@ -158,7 +170,7 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
         $(document).ready(function() {
             // bind away
             $('#oncoprint_controls #sort_by').change(function() {
-                oncoprint.sortBy(sortBy.val(), cases.split(" "));
+                oncoprint.sortBy(sortBy.val(), cases);
             });
 
             $('#toggle_unaltered_cases').click(function() {
