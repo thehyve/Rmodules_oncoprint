@@ -59,13 +59,13 @@ class OncoprintController {
 
                     switch (dataTypeResource.dataTypeName) {
                     case 'mrna':
-                        processMrna(tabularResult, oncoprintEntries)
+                        processMrna(tabularResult)
                         break
                     case 'acgh':
-                        processAcgh(tabularResult, oncoprintEntries)
+                        processAcgh(tabularResult)
                         break
                     case 'protein':
-                        processProtein(tabularResult, oncoprintEntries)
+                        processProtein(tabularResult)
                         break
                     }
                     tabularResult.close()
@@ -79,7 +79,7 @@ class OncoprintController {
         render oncoprintEntries as JSON
     }
 
-    private void processMrna(TabularResult tabularResult, List<Map> oncoprintEntries) {
+    private void processMrna(TabularResult tabularResult) {
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
             assayList.each { AssayColumn assayColumn ->
@@ -127,7 +127,7 @@ class OncoprintController {
         return dataTypeResource
     }
 
-    private void processAcgh(TabularResult tabularResult, List<Map> oncoprintEntries) {
+    private void processAcgh(TabularResult tabularResult) {
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
             assayList.each { AssayColumn assayColumn ->
@@ -156,7 +156,7 @@ class OncoprintController {
         }
     }
 
-    private void processProtein(TabularResult tabularResult, List<Map> oncoprintEntries) {
+    private void processProtein(TabularResult tabularResult) {
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
             assayList.each { AssayColumn assayColumn ->
