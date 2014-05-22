@@ -9,9 +9,7 @@
 //
 // and width (number) for the width of the oncoprint
 // and legend (undefined or div element)
-define("OncoprintCore",
-    [           "OncoprintUtils",  "MemoSort"],
-    function(   utils,              MemoSort) {
+var OncoprintCore = function(utils, MemoSort) {
         return function(div, params) {
             params.clinicalData = params.clinicalData || [];        // initialize
             params.clinical_attrs = params.clinical_attrs || [];
@@ -566,4 +564,4 @@ define("OncoprintCore",
             return State;
         };
 
-    });
+    };

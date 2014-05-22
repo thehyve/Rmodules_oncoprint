@@ -28,12 +28,8 @@ function loadOncoprintOutput() {
         getCases: function() { return ''; } // list of queried case ids
     };
 
-    // This lets require.js execute the oncoprint code, starting at main-boilerplate.js
-    var s = document.createElement('script');
-    s.setAttribute('data-main', pageInfo.basePath + '/js/oncoprint/main-boilerplate.js');
-    s.type = 'text/javascript';
-    s.src = pageInfo.basePath + '/js/oncoprint/require.js';
-    document.body.appendChild(s);
+    var oncoprint = OncoprintCore(OncoprintUtils, MemoSort);
+    MainBoilerplate(oncoprint, OncoprintUtils);
 }
 
 // constructor

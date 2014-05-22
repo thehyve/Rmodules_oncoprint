@@ -10,8 +10,7 @@
 // attributes : the ordering of the attributes.  Omission basically amounts to "smallest"
 //
 // returns the data, sorted
-define("MemoSort", function() {
-    return function(data, attributes) {
+var MemoSort = function(data, attributes) {
         // compares two objects that have gene data (cna, mutation, mrna, rppa).
         // Returns a number that indicates the order.
         var comp_genes = function(attr1, attr2) {
@@ -133,4 +132,3 @@ define("MemoSort", function() {
 
         return data.sort(comp);
     };
-});

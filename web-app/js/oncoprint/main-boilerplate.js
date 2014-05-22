@@ -1,8 +1,7 @@
 // boilerplate for the main portal page
 //
 // Gideon Dresdner July 2013
-requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
-    function(   Oncoprint,      utils) {
+var MainBoilerplate = function(Oncoprint, utils) {
 
         // This is for the moustache-like templates
         // prevents collisions with JSP tags
@@ -195,4 +194,4 @@ requirejs(  [         'OncoprintCore',    'OncoprintUtils'],
                 return;
             });
         });
-    });
+    };
