@@ -66,8 +66,10 @@ define("OncoprintUtils", (function() {
         var new_values = attribues_minus_attrs.map(function(str) {
             return {
                 sample: key_values.key,
-                attr_id: str,
-                attr_val: "NA"
+                gene: str
+                // TODO: make distinction between gene values and attribute values
+                //attr_id: str,
+                //attr_val: "NA"
             };
         });
 
