@@ -3,9 +3,10 @@
 <img id="outer_loader_img" src="${resource(dir: 'images', file: 'ajax-loader.gif')}" style="display: none;">
 <div style="" id="everything">
 <h4 style="display:inline;">OncoPrint
-    <small>(<a href="faq.jsp#what-are-oncoprints">What are OncoPrints?</a>)</small>
+    <!--TODO: implement: <small>(<a href="faq.jsp#what-are-oncoprints">What are OncoPrints?</a>)</small>-->
 </h4>
 
+<!-- TODO: implement
 <span>
     <form id="pdf-form" style="display:inline;" action="svgtopdf.do" method="post">
         <input type="hidden" name="svgelement">
@@ -21,6 +22,7 @@
         <input type="submit" value="SVG">
     </form>
 </span>
+-->
 
 <div id="oncoprint_controls" style="margin-top:10px; margin-bottom:20px;">
     <style>
