@@ -79,6 +79,10 @@ class OncoprintController {
         render oncoprintEntries as JSON
     }
 
+    def fetchClinicalAttributes = {
+        render("[]")
+    }
+
     private void processMrna(TabularResult tabularResult) {
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
@@ -95,6 +99,56 @@ class OncoprintController {
                 }
                 if (value < -1.0) {
                     oncoprintEntry["mrna"] = "DOWNREGULATED"
+                }
+            }
+        }
+    }
+
+    private void processAcgh(TabularResult tabularResult) {
+        def assayList = tabularResult.indicesList
+        tabularResult.each { DataRow row ->
+            assayList.each { AssayColumn assayColumn ->
+                def value = row[assayColumn].getCopyNumberState()
+                if (value == null) {
+                    return
+                }
+
+                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
+                        assayColumn.patientInTrialId)
+                switch (value) {
+                case CopyNumberState.LOSS:
+                    oncoprintEntry["cna"] = "LOSS"
+                    break
+                case CopyNumberState.NORMAL:
+                    oncoprintEntry["cna"] = "DIPLOID"
+                    break
+                case CopyNumberState.GAIN:
+                    oncoprintEntry["cna"] = "GAINED"
+                    break
+                case CopyNumberState.AMPLIFICATION:
+                    oncoprintEntry["cna"] = "AMPLIFIED"
+                    break
+                }
+            }
+        }
+    }
+
+    private void processProtein(TabularResult tabularResult) {
+        def assayList = tabularResult.indicesList
+        tabularResult.each { DataRow row ->
+            assayList.each { AssayColumn assayColumn ->
+                def value = row[assayColumn] as Double
+                if (value == null) {
+                    return
+                }
+
+                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
+                        assayColumn.patientInTrialId)
+                if (value > 1.0) {
+                    oncoprintEntry["rppa"] = "UPREGULATED"
+                }
+                if (value < -1.0) {
+                    oncoprintEntry["rppa"] = "DOWNREGULATED"
                 }
             }
         }
@@ -126,61 +180,6 @@ class OncoprintController {
         HighDimensionDataTypeResource dataTypeResource = assayMultiMap.keySet()[0]
         return dataTypeResource
     }
-
-    private void processAcgh(TabularResult tabularResult) {
-        def assayList = tabularResult.indicesList
-        tabularResult.each { DataRow row ->
-            assayList.each { AssayColumn assayColumn ->
-                def value = row[assayColumn].getCopyNumberState()
-                if (value == null) {
-                    return
-                }
-
-                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
-                        assayColumn.patientInTrialId)
-                switch (value) {
-                    case CopyNumberState.LOSS:
-                        oncoprintEntry["cna"] = "LOSS"
-                        break
-                    case CopyNumberState.NORMAL:
-                        oncoprintEntry["cna"] = "DIPLOID"
-                        break
-                    case CopyNumberState.GAIN:
-                        oncoprintEntry["cna"] = "GAINED"
-                        break
-                    case CopyNumberState.AMPLIFICATION:
-                        oncoprintEntry["cna"] = "AMPLIFIED"
-                        break
-                }
-            }
-        }
-    }
-
-    private void processProtein(TabularResult tabularResult) {
-        def assayList = tabularResult.indicesList
-        tabularResult.each { DataRow row ->
-            assayList.each { AssayColumn assayColumn ->
-                def value = row[assayColumn] as Double
-                if (value == null) {
-                    return
-                }
-
-                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
-                        assayColumn.patientInTrialId)
-                if (value > 1.0) {
-                    oncoprintEntry["rppa"] = "UPREGULATED"
-                }
-                if (value < -1.0) {
-                    oncoprintEntry["rppa"] = "DOWNREGULATED"
-                }
-            }
-        }
-    }
-
-    def fetchClinicalAttributes = {
-        render("[]")
-    }
-
 
     private List<String> extractOntologyTerms() {
         analysisConstraints.assayConstraints.remove('ontology_term').collect {
