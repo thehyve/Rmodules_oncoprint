@@ -1,9 +1,7 @@
 package com.recomdata.transmart.data.association
 
-import com.google.common.collect.Maps
 import grails.converters.JSON
 import jobs.AnalysisConstraints
-import jobs.UserParameters
 import jobs.steps.OpenHighDimensionalDataStep
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.DataRow
@@ -24,12 +22,8 @@ class OncoprintController {
             "protein":  "zscore"
     ]
 
-    /* in */
-    UserParameters userParams
     AnalysisConstraints analysisConstraints
 
-    /* out */
-    Map<List<String>, TabularResult> results = [:]
     List<Map> oncoprintEntries = []
 
     @Autowired
@@ -43,8 +37,6 @@ class OncoprintController {
     }
 
     def fetchGeneData = {
-
-        userParams = new UserParameters(map: Maps.newHashMap(params))
         analysisConstraints = RModulesController.createAnalysisConstraints(params)
 
         List<String> ontologyTerms = extractOntologyTerms()
@@ -76,7 +68,6 @@ class OncoprintController {
     }
 
     private void processResult(TabularResult tabularResult, searchKeyword, String dataType) {
-
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
             if (searchKeyword.symbol == null) {
