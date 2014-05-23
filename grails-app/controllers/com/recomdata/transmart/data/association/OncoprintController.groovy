@@ -43,12 +43,16 @@ class OncoprintController {
         List<Integer> searchKeywordIds = extractSearchKeywordIds()
         TabularResult tabularResult;
 
+        Map<String, HighDimensionDataTypeResource> highDimDataTypeResourceCache = [:]
+        ontologyTerms.each { ontologyTerm ->
+            highDimDataTypeResourceCache[ontologyTerm] = getHighDimDataTypeResourceFromConcept(ontologyTerm)
+        }
+
         try {
             extractPatientSets().each { resultInstanceId ->
                 searchKeywordIds.each { searchKeywordId ->
                     def searchKeyword = [symbol: null]
-                    ontologyTerms.each { ontologyTerm ->
-                        HighDimensionDataTypeResource dataTypeResource = getHighDimDataTypeResourceFromConcept(ontologyTerm)
+                    highDimDataTypeResourceCache.each { ontologyTerm, dataTypeResource ->
                         tabularResult = fetchData(resultInstanceId, searchKeywordId, ontologyTerm, dataTypeResource)
                         processResult(tabularResult, searchKeyword, dataTypeResource.dataTypeName)
                         tabularResult.close()
@@ -168,9 +172,7 @@ class OncoprintController {
     }
 
     private List<Integer> extractSearchKeywordIds() {
-        analysisConstraints.dataConstraints.remove('search_keyword_ids').keyword_ids.collect {
-            it.value
-        }
+        analysisConstraints.dataConstraints.remove('search_keyword_ids').keyword_ids
     }
 
     private List<Integer> extractPatientSets() {
