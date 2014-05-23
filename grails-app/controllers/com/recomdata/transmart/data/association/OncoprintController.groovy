@@ -35,7 +35,6 @@ class OncoprintController {
     @Autowired
     HighDimensionResource highDimensionResource
 
-
     def oncoprintOut = {
         render(template: "/plugin/oncoprint_out",
                 model:[
@@ -49,26 +48,19 @@ class OncoprintController {
         analysisConstraints = RModulesController.createAnalysisConstraints(params)
 
         List<String> ontologyTerms = extractOntologyTerms()
+        List<Integer> searchKeywordIds = extractSearchKeywordIds()
         TabularResult tabularResult;
 
         try {
-            extractPatientSets().eachWithIndex { resultInstanceId, index ->
-                ontologyTerms.each { ontologyTerm ->
-                    HighDimensionDataTypeResource dataTypeResource = getHighDimDataTypeResourceFromConcept(ontologyTerm)
-                    tabularResult = fetchData(resultInstanceId, ontologyTerm, dataTypeResource)
-
-                    switch (dataTypeResource.dataTypeName) {
-                    case 'mrna':
-                        processMrna(tabularResult)
-                        break
-                    case 'acgh':
-                        processAcgh(tabularResult)
-                        break
-                    case 'protein':
-                        processProtein(tabularResult)
-                        break
+            extractPatientSets().each { resultInstanceId ->
+                searchKeywordIds.each { searchKeywordId ->
+                    def searchKeyword = [symbol: null]
+                    ontologyTerms.each { ontologyTerm ->
+                        HighDimensionDataTypeResource dataTypeResource = getHighDimDataTypeResourceFromConcept(ontologyTerm)
+                        tabularResult = fetchData(resultInstanceId, searchKeywordId, ontologyTerm, dataTypeResource)
+                        processResult(tabularResult, searchKeyword, dataTypeResource.dataTypeName)
+                        tabularResult.close()
                     }
-                    tabularResult.close()
                 }
             }
         } catch(Throwable t) {
@@ -83,74 +75,70 @@ class OncoprintController {
         render("[]")
     }
 
-    private void processMrna(TabularResult tabularResult) {
+    private void processResult(TabularResult tabularResult, searchKeyword, String dataType) {
+
         def assayList = tabularResult.indicesList
         tabularResult.each { DataRow row ->
-            assayList.each { AssayColumn assayColumn ->
-                def value = row[assayColumn] as Double
-                if (value == null) {
-                    return
-                }
-
-                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
-                        assayColumn.patientInTrialId)
-                if (value > 1.0) {
-                    oncoprintEntry["mrna"] = "UPREGULATED"
-                }
-                if (value < -1.0) {
-                    oncoprintEntry["mrna"] = "DOWNREGULATED"
-                }
+            if (searchKeyword.symbol == null) {
+                searchKeyword.symbol = row.bioMarker
             }
-        }
-    }
-
-    private void processAcgh(TabularResult tabularResult) {
-        def assayList = tabularResult.indicesList
-        tabularResult.each { DataRow row ->
             assayList.each { AssayColumn assayColumn ->
-                def value = row[assayColumn].getCopyNumberState()
+
+                def oncoprintEntry = getOrCreateOncoprintEntry(searchKeyword.symbol,
+                        assayColumn.patientInTrialId)
+
+                def value = row[assayColumn]
                 if (value == null) {
                     return
                 }
 
-                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
-                        assayColumn.patientInTrialId)
-                switch (value) {
-                case CopyNumberState.LOSS:
-                    oncoprintEntry["cna"] = "LOSS"
+                switch (dataType) {
+                case 'mrna':
+                    processMrna(value, oncoprintEntry)
                     break
-                case CopyNumberState.NORMAL:
-                    oncoprintEntry["cna"] = "DIPLOID"
+                case 'acgh':
+                    processAcgh(value.getCopyNumberState(), oncoprintEntry)
                     break
-                case CopyNumberState.GAIN:
-                    oncoprintEntry["cna"] = "GAINED"
-                    break
-                case CopyNumberState.AMPLIFICATION:
-                    oncoprintEntry["cna"] = "AMPLIFIED"
+                case 'protein':
+                    processProtein(value, oncoprintEntry)
                     break
                 }
             }
         }
     }
 
-    private void processProtein(TabularResult tabularResult) {
-        def assayList = tabularResult.indicesList
-        tabularResult.each { DataRow row ->
-            assayList.each { AssayColumn assayColumn ->
-                def value = row[assayColumn] as Double
-                if (value == null) {
-                    return
-                }
+    private void processMrna(Double value, oncoprintEntry) {
+        if (value > 1.0) {
+            oncoprintEntry["mrna"] = "UPREGULATED"
+        }
+        if (value < -1.0) {
+            oncoprintEntry["mrna"] = "DOWNREGULATED"
+        }
+    }
 
-                def oncoprintEntry = getOrCreateOncoprintEntry(row.bioMarker,
-                        assayColumn.patientInTrialId)
-                if (value > 1.0) {
-                    oncoprintEntry["rppa"] = "UPREGULATED"
-                }
-                if (value < -1.0) {
-                    oncoprintEntry["rppa"] = "DOWNREGULATED"
-                }
-            }
+    private void processAcgh(CopyNumberState value, oncoprintEntry) {
+        switch (value) {
+        case CopyNumberState.LOSS:
+            oncoprintEntry["cna"] = "LOSS"
+            break
+        case CopyNumberState.NORMAL:
+            oncoprintEntry["cna"] = "DIPLOID"
+            break
+        case CopyNumberState.GAIN:
+            oncoprintEntry["cna"] = "GAINED"
+            break
+        case CopyNumberState.AMPLIFICATION:
+            oncoprintEntry["cna"] = "AMPLIFIED"
+            break
+        }
+    }
+
+    private void processProtein(Double value, oncoprintEntry) {
+        if (value > 1.0) {
+            oncoprintEntry["rppa"] = "UPREGULATED"
+        }
+        if (value < -1.0) {
+            oncoprintEntry["rppa"] = "DOWNREGULATED"
         }
     }
 
@@ -158,8 +146,9 @@ class OncoprintController {
         Map entry = oncoprintEntries.find( {
             it.gene == geneSymbol && it.sample == sampleId
         })
-        if (entry != null)
+        if (entry != null) {
             return entry
+        }
         entry = [ gene: geneSymbol, sample: sampleId ]
         oncoprintEntries << entry
         return entry
@@ -187,12 +176,18 @@ class OncoprintController {
         }
     }
 
+    private List<Integer> extractSearchKeywordIds() {
+        analysisConstraints.dataConstraints.remove('search_keyword_ids').keyword_ids.collect {
+            it.value
+        }
+    }
+
     private List<Integer> extractPatientSets() {
         analysisConstraints.assayConstraints.remove("patient_set").grep()
     }
 
-    private TabularResult fetchData(Integer patientSetId, String ontologyTerm,
-                                      HighDimensionDataTypeResource dataTypeResource) {
+    private TabularResult fetchData(Integer patientSetId, Integer searchKeywordId, String ontologyTerm,
+                                    HighDimensionDataTypeResource dataTypeResource) {
 
         List<DataConstraint> dataConstraints = analysisConstraints['dataConstraints'].
                 collect { String constraintType, values ->
@@ -200,6 +195,13 @@ class OncoprintController {
                         dataTypeResource.createDataConstraint(values, constraintType)
                     }
                 }.grep()
+
+        dataConstraints.add(
+                dataTypeResource.createDataConstraint(
+                        DataConstraint.SEARCH_KEYWORD_IDS_CONSTRAINT,
+                        keyword_ids: [searchKeywordId]
+                )
+        )
 
         List<AssayConstraint> assayConstraints = analysisConstraints['assayConstraints'].
                 collect { String constraintType, values ->
