@@ -139,5 +139,3 @@ OncoprintView.prototype.get_inputs = function (form_params) {
 
 // init oncoprint view instance
 var oncoprintView = new OncoprintView();
-
-

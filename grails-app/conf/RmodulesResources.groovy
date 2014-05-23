@@ -55,13 +55,11 @@ modules = {
         resource url:"/js/oncoprint/underscore-min.js"
         resource url:"/js/oncoprint/backbone-min.js"
         resource url:"/js/oncoprint/d3.min.js"
-
         resource url:"/js/oncoprint/Models.js"
         resource url:"/js/oncoprint/MemoSort.js"
         resource url:"/js/oncoprint/OncoprintUtils.js"
         resource url:"/js/oncoprint/OncoprintCore.js"
         resource url:"/js/oncoprint/main-boilerplate.js"
-
         resource url:"/js/plugin/Oncoprint.js"
     }
     histogram {
