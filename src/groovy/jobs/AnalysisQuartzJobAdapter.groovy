@@ -106,11 +106,12 @@ class AnalysisQuartzJobAdapter implements Job {
             job.log.info "updateStatus called for status:$status, viewerUrl:$viewerUrl"
             asyncJobService.updateStatus job.name, status, viewerUrl
         }
+        job.setStatusList = { List<String> statusList ->
+            jobResultsService[job.name]["StatusList"] = statusList
+        }
 
         job.topTemporaryDirectory = new File(Holders.config.RModules.tempFolderDirectory)
-        if(job instanceof AbstractLocalRAnalysisJob) {
-            job.scriptsDirectory = new File(Holders.config.RModules.pluginScriptDirectory)
-        }
+        job.scriptsDirectory = new File(Holders.config.RModules.pluginScriptDirectory)
 
         job.studyName = i2b2ExportHelperService.
                 findStudyAccessions([jobDataMap.result_instance_id1])

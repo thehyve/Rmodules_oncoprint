@@ -27,7 +27,11 @@ abstract class AbstractAnalysisJob {
 
     Closure updateStatus
 
+    Closure setStatusList
+
     File topTemporaryDirectory
+
+    File scriptsDirectory
 
     /* TODO: Used to build temporary working directory for R processing phase.
              This is called subset1_<study name>. What about subset 2? Is this
@@ -47,6 +51,9 @@ abstract class AbstractAnalysisJob {
 
         List<Step> stepList = prepareSteps()
 
+        // build status list
+        setStatusList(stepList.collect({ it.statusName }).grep())
+
         for (Step step in stepList) {
             if (step.statusName) {
                 updateStatus step.statusName
@@ -59,6 +66,8 @@ abstract class AbstractAnalysisJob {
     }
 
     abstract protected List<Step> prepareSteps()
+
+    abstract protected List<String> getRStatements()
 
     private void validateName() {
         if (!(name ==~ /^[0-9A-Za-z-]+$/)) {

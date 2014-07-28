@@ -39,7 +39,8 @@ class RModulesController {
             "RNASEQ":           "rnaseq_cog",
             "METABOLOMICS":     "metabolite",
             "Chromosomal":      "acgh",
-            "acgh":             "acgh"
+            "acgh":             "acgh",
+            "rnaseq":           "rnaseq"
     ]
 
     private static final String PARAM_ANALYSIS_CONSTRAINTS = 'analysisConstraints'
@@ -128,6 +129,15 @@ class RModulesController {
                 break
             case 'acghFrequencyPlot':
                 jsonResult = createJob(params, AcghFrequencyPlot)
+                break
+            case 'groupTestaCGH':
+                jsonResult = createJob(params, AcghGroupTest)
+                break
+            case 'aCGHSurvivalAnalysis':
+                jsonResult = createJob(params, AcghSurvivalAnalysis)
+                break
+            case 'groupTestRNASeq':
+                jsonResult = createJob(params, RNASeqGroupTest)
                 break
             default:
                 jsonResult = RModulesService.scheduleJob(
