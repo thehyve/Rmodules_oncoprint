@@ -47,20 +47,20 @@ modules = {
     waterfall {
         resource url:"/js/plugin/Waterfall.js"
     }
-    oncoprint {
-        resource url:"/js/oncoprint/jquery.min.js"
-        resource url:"/js/oncoprint/jquery-ui.min.js"
-        resource url:"/js/oncoprint/chosen.jquery.js"
-        resource url:"/js/oncoprint/jquery.qtip.min.js"
-        resource url:"/js/oncoprint/underscore-min.js"
-        resource url:"/js/oncoprint/backbone-min.js"
-        resource url:"/js/oncoprint/d3.min.js"
-        resource url:"/js/oncoprint/Models.js"
-        resource url:"/js/oncoprint/MemoSort.js"
-        resource url:"/js/oncoprint/OncoprintUtils.js"
-        resource url:"/js/oncoprint/OncoprintCore.js"
-        resource url:"/js/oncoprint/main-boilerplate.js"
-        resource url:"/js/plugin/Oncoprint.js"
+    geneprint {
+        resource url:"/js/geneprint/jquery.min.js"
+        resource url:"/js/geneprint/jquery-ui.min.js"
+        resource url:"/js/geneprint/chosen.jquery.js"
+        resource url:"/js/geneprint/jquery.qtip.min.js"
+        resource url:"/js/geneprint/underscore-min.js"
+        resource url:"/js/geneprint/backbone-min.js"
+        resource url:"/js/geneprint/d3.min.js"
+        resource url:"/js/geneprint/Models.js"
+        resource url:"/js/geneprint/MemoSort.js"
+        resource url:"/js/geneprint/OncoprintUtils.js"
+        resource url:"/js/geneprint/OncoprintCore.js"
+        resource url:"/js/geneprint/main-boilerplate.js"
+        resource url:"/js/plugin/Geneprint.js"
     }
     histogram {
         resource url:"/js/plugin/Histogram.js"

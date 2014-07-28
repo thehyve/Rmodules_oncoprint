@@ -121,8 +121,8 @@ class RModulesController {
             case 'waterfall':
                 jsonResult = createJob(params, Waterfall, false)
                 break
-            case 'oncoprint':
-                jsonResult = createJob(params, Oncoprint)
+            case 'geneprint':
+                jsonResult = createJob(params, Geneprint)
                 break
             case 'histogram':
                 jsonResult = createJob(params, Histogram, false)

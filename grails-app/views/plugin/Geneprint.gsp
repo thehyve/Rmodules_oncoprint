@@ -1,5 +1,5 @@
-%{--include js lib for oncoprint dynamically--}%
-<r:require modules="oncoprint"/>
+%{--include js lib for geneprint dynamically--}%
+<r:require modules="geneprint"/>
 <r:layoutResources disposition="defer"/>
 
 <div id="analysisWidget">
@@ -20,7 +20,7 @@
                 <div id='divIndependentVariable' class="queryGroupIncludeSmall highDimBox"></div>
                 <div class="highDimBtns">
                     <button type="button" onclick="highDimensionalData.gather_high_dimensional_data('divIndependentVariable')">High Dimensional Data</button>
-                    <button type="button" onclick="oncoprintView.clear_high_dimensional_input('divIndependentVariable')">Clear</button>
+                    <button type="button" onclick="geneprintView.clear_high_dimensional_input('divIndependentVariable')">Clear</button>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
         </fieldset>
 
         <fieldset class="toolFields">
-            <input type="button" value="Run" onClick="oncoprintView.submit_job(this.form);" class="runAnalysisBtn">
+            <input type="button" value="Run" onClick="geneprintView.submit_job(this.form);" class="runAnalysisBtn">
         </fieldset>
     </form>
 

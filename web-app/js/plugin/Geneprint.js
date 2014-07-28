@@ -3,12 +3,12 @@
  * - Register drag and drop.
  * - Clear out all gobal variables and reset them to blank.
  */
-function loadOncoprintView(){
-    oncoprintView.clear_high_dimensional_input('divIndependentVariable');
-    oncoprintView.register_drag_drop();
+function loadGeneprintView(){
+    geneprintView.clear_high_dimensional_input('divIndependentVariable');
+    geneprintView.register_drag_drop();
 }
 
-function loadOncoprintOutput() {
+function loadGeneprintOutput() {
 
     // Store the currently selected options as global variables;
     window.cancer_study_id_selected = 'coadread_tcga_pub';
@@ -33,18 +33,18 @@ function loadOncoprintOutput() {
 }
 
 // constructor
-var OncoprintView = function () {
+var GeneprintView = function () {
     RmodulesView.call(this);
 }
 
 // inherit RmodulesView
-OncoprintView.prototype = new RmodulesView();
+GeneprintView.prototype = new RmodulesView();
 
 // correct the pointer
-OncoprintView.prototype.constructor = OncoprintView;
+GeneprintView.prototype.constructor = GeneprintView;
 
 // submit analysis job
-OncoprintView.prototype.submit_job = function () {
+GeneprintView.prototype.submit_job = function () {
     var job = this;
 
     var actualSubmit = function() {
@@ -56,9 +56,9 @@ OncoprintView.prototype.submit_job = function () {
 
             window.formParams = formParams;
 
-            var url = pageInfo.basePath + "/oncoprint/oncoprintOut";
+            var url = pageInfo.basePath + "/geneprint/geneprintOut";
             //Set the results DIV to use the URL from the job.
-            Ext.get('analysisOutput').load({url: url, callback: loadOncoprintOutput});
+            Ext.get('analysisOutput').load({url: url, callback: loadGeneprintOutput});
             //Set the flag that says we run an analysis so we can warn the user if they navigate away.
             GLOBAL.AnalysisRun = true;
 
@@ -82,7 +82,7 @@ OncoprintView.prototype.submit_job = function () {
 }
 
 // get form params
-OncoprintView.prototype.get_form_params = function () {
+GeneprintView.prototype.get_form_params = function () {
     var formParameters = {}; // init
 
     //Use a common function to load the High Dimensional Data params.
@@ -100,12 +100,12 @@ OncoprintView.prototype.get_form_params = function () {
         var inputConceptPathVar = readConceptVariables("divIndependentVariable");
 
         // assign values to form parameters
-        formParameters['jobType'] = 'Oncoprint';
+        formParameters['jobType'] = 'Geneprint';
         formParameters['independentVariable'] = inputConceptPathVar;
         formParameters['variablesConceptPaths'] = inputConceptPathVar;
 
         // get analysis constraints
-        var constraints_json = this.get_analysis_constraints('Oncoprint');
+        var constraints_json = this.get_analysis_constraints('Geneprint');
         constraints_json['projections'] = ["all_data"];
 
         formParameters['analysisConstraints'] = JSON.stringify(constraints_json);
@@ -120,7 +120,7 @@ OncoprintView.prototype.get_form_params = function () {
     return formParameters;
 }
 
-OncoprintView.prototype.get_inputs = function (form_params) {
+GeneprintView.prototype.get_inputs = function (form_params) {
     return  [
         {
             "label" : "High Dimensional Data",
@@ -137,5 +137,5 @@ OncoprintView.prototype.get_inputs = function (form_params) {
     ];
 }
 
-// init oncoprint view instance
-var oncoprintView = new OncoprintView();
+// init geneprint view instance
+var geneprintView = new GeneprintView();

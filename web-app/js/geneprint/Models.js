@@ -60,12 +60,12 @@ var ClinicalColl = Backbone.Collection.extend({
 var GeneDataColl = Backbone.Collection.extend({
     model: Backbone.Model.extend({}),
     //url: "GeneData.json"
-    url: "/transmart/oncoprint/fetchGeneData"
+    url: "/transmart/geneprint/fetchGeneData"
 });
 
 var ClinicalAttributesColl= Backbone.Collection.extend({
     model: Backbone.Model.extend({}),       // the trivial model
     url: function() {
-        return "/transmart/oncoprint/fetchClinicalAttributes";
+        return "/transmart/geneprint/fetchClinicalAttributes";
     } //return "clinicalAttributes.json";
 });

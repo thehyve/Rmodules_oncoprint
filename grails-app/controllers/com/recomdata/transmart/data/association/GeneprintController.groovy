@@ -14,7 +14,7 @@ import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstra
 import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 
-class OncoprintController {
+class GeneprintController {
 
     final static Map<String, String> projectionLookup = [
             "mrna":     "zscore",
@@ -24,13 +24,13 @@ class OncoprintController {
 
     AnalysisConstraints analysisConstraints
 
-    List<Map> oncoprintEntries = []
+    List<Map> geneprintEntries = []
 
     @Autowired
     HighDimensionResource highDimensionResource
 
-    def oncoprintOut = {
-        render(template: "/plugin/oncoprint_out",
+    def geneprintOut = {
+        render(template: "/plugin/geneprint_out",
                 model:[
                 ],
                 contextPath:pluginContextPath)
@@ -64,7 +64,7 @@ class OncoprintController {
             throw t
         }
 
-        render oncoprintEntries as JSON
+        render geneprintEntries as JSON
     }
 
     def fetchClinicalAttributes = {
@@ -79,7 +79,7 @@ class OncoprintController {
             }
             assayList.each { AssayColumn assayColumn ->
 
-                def oncoprintEntry = getOrCreateOncoprintEntry(searchKeyword.symbol,
+                def geneprintEntry = getOrCreateGeneprintEntry(searchKeyword.symbol,
                         assayColumn.patientInTrialId)
 
                 def value = row[assayColumn]
@@ -89,63 +89,63 @@ class OncoprintController {
 
                 switch (dataType) {
                 case 'mrna':
-                    processMrna(value, oncoprintEntry)
+                    processMrna(value, geneprintEntry)
                     break
                 case 'acgh':
-                    processAcgh(value.getCopyNumberState(), oncoprintEntry)
+                    processAcgh(value.getCopyNumberState(), geneprintEntry)
                     break
                 case 'protein':
-                    processProtein(value, oncoprintEntry)
+                    processProtein(value, geneprintEntry)
                     break
                 }
             }
         }
     }
 
-    private void processMrna(Double value, oncoprintEntry) {
+    private void processMrna(Double value, geneprintEntry) {
         if (value > 1.0) {
-            oncoprintEntry["mrna"] = "UPREGULATED"
+            geneprintEntry["mrna"] = "UPREGULATED"
         }
         if (value < -1.0) {
-            oncoprintEntry["mrna"] = "DOWNREGULATED"
+            geneprintEntry["mrna"] = "DOWNREGULATED"
         }
     }
 
-    private void processAcgh(CopyNumberState value, oncoprintEntry) {
+    private void processAcgh(CopyNumberState value, geneprintEntry) {
         switch (value) {
         case CopyNumberState.LOSS:
-            oncoprintEntry["cna"] = "LOSS"
+            geneprintEntry["cna"] = "LOSS"
             break
         case CopyNumberState.NORMAL:
-            oncoprintEntry["cna"] = "DIPLOID"
+            geneprintEntry["cna"] = "DIPLOID"
             break
         case CopyNumberState.GAIN:
-            oncoprintEntry["cna"] = "GAINED"
+            geneprintEntry["cna"] = "GAINED"
             break
         case CopyNumberState.AMPLIFICATION:
-            oncoprintEntry["cna"] = "AMPLIFIED"
+            geneprintEntry["cna"] = "AMPLIFIED"
             break
         }
     }
 
-    private void processProtein(Double value, oncoprintEntry) {
+    private void processProtein(Double value, geneprintEntry) {
         if (value > 1.0) {
-            oncoprintEntry["rppa"] = "UPREGULATED"
+            geneprintEntry["rppa"] = "UPREGULATED"
         }
         if (value < -1.0) {
-            oncoprintEntry["rppa"] = "DOWNREGULATED"
+            geneprintEntry["rppa"] = "DOWNREGULATED"
         }
     }
 
-    private Map getOrCreateOncoprintEntry(String geneSymbol, String sampleId) {
-        Map entry = oncoprintEntries.find( {
+    private Map getOrCreateGeneprintEntry(String geneSymbol, String sampleId) {
+        Map entry = geneprintEntries.find( {
             it.gene == geneSymbol && it.sample == sampleId
         })
         if (entry != null) {
             return entry
         }
         entry = [ gene: geneSymbol, sample: sampleId ]
-        oncoprintEntries << entry
+        geneprintEntries << entry
         return entry
     }
 

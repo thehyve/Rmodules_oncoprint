@@ -1,9 +1,7 @@
 package jobs
 
-import jobs.steps.AbstractDumpStep
 import jobs.steps.OpenHighDimensionalDataStep
 import jobs.steps.ParametersFileStep
-import jobs.steps.RCommandsStep
 import jobs.steps.Step
 import jobs.steps.ValueGroupDumpDataStep
 import org.springframework.context.annotation.Scope
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Scope('job')
-class Oncoprint extends HighDimensionalOnlyJob {
+class Geneprint extends HighDimensionalOnlyJob {
 
 
     @Override
@@ -47,7 +45,7 @@ class Oncoprint extends HighDimensionalOnlyJob {
 
     @Override
     protected getForwardPath() {
-        "/Oncoprint/oncoprintOut?jobName=${name}"
+        "/Geneprint/geneprintOut?jobName=${name}"
     }
 
 }

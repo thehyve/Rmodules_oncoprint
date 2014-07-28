@@ -2,8 +2,8 @@
 <div id="oncoprint" style="padding-top:10px; padding-bottom:10px; padding-left:10px; border: 1px solid #CCC;">
 <img id="outer_loader_img" src="${resource(dir: 'images', file: 'ajax-loader.gif')}" style="display: none;">
 <div style="" id="everything">
-<h4 style="display:inline;">OncoPrint
-    <!--TODO: implement: <small>(<a href="faq.jsp#what-are-oncoprints">What are OncoPrints?</a>)</small>-->
+<h4 style="display:inline;">GenePrint
+    <!--TODO: implement: <small>(<a href="faq.jsp#what-are-geneprints">What are GenePrints?</a>)</small>-->
 </h4>
 
 <!-- TODO: implement
