@@ -179,7 +179,7 @@ class GeneprintController {
         analysisConstraints.assayConstraints.remove("patient_set").grep()
     }
 
-    private TabularResult fetchData(Integer patientSetId, Integer searchKeywordId, String ontologyTerm,
+    private TabularResult fetchData(Integer patientSetId, String searchKeywordId, String ontologyTerm,
                                     HighDimensionDataTypeResource dataTypeResource) {
 
         List<DataConstraint> dataConstraints = analysisConstraints['dataConstraints'].
