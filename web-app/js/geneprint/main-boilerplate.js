@@ -62,6 +62,10 @@ var MainBoilerplate = function(Oncoprint, utils) {
                 }
             })
 
+            // Close progress dialog
+            $('.runAnalysisBtn')[0].disabled = false;
+            destroyWorkflowStatus();
+
             // Set up oncoprint
             oncoprint = Oncoprint(document.getElementById('oncoprint_body'), {
                 geneData: geneData,

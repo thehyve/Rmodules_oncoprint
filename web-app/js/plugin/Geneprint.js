@@ -54,8 +54,14 @@ GeneprintView.prototype.submit_job = function () {
         if (formParams) { // if formParams is not null
             //submitJob(formParams);
 
+            // Set up progress dialog
+            $('.runAnalysisBtn')[0].disabled = true;
+            createWorkflowStatus($j('#dataAssociationBody'), true);
+
             window.formParams = formParams;
 
+            // Immediately render the output; the oncoprint javascript
+            // will make the calls to the backend directly.
             var url = pageInfo.basePath + "/geneprint/geneprintOut";
             //Set the results DIV to use the URL from the job.
             Ext.get('analysisOutput').load({url: url, callback: loadGeneprintOutput});
