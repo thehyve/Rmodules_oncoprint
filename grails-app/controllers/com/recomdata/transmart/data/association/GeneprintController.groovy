@@ -19,7 +19,8 @@ class GeneprintController {
     final static Map<String, String> projectionLookup = [
             "mrna":     "zscore",
             "acgh":     "acgh_values",
-            "protein":  "zscore"
+            "protein":  "zscore",
+            "vcf":      Projection.ALL_DATA_PROJECTION
     ]
 
     AnalysisConstraints analysisConstraints
@@ -97,6 +98,9 @@ class GeneprintController {
                 case 'protein':
                     processProtein(value, geneprintEntry)
                     break
+                case 'vcf':
+                    processVcf(value.reference, geneprintEntry)
+                    break
                 }
             }
         }
@@ -134,6 +138,14 @@ class GeneprintController {
         }
         if (value < -1.0) {
             geneprintEntry["rppa"] = "DOWNREGULATED"
+        }
+    }
+
+    private void processVcf(boolean isReference, geneprintEntry) {
+        if (!isReference) {
+            // Any non-undefined value will flag it as a mutation
+            // TODO: differentiate between types of mutation?
+            geneprintEntry["mutation"] = "1"
         }
     }
 
