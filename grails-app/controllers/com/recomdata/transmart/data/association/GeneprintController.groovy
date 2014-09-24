@@ -38,6 +38,12 @@ class GeneprintController {
     }
 
     def fetchGeneData = {
+
+        // Debugging: generate all possible combinations of data
+        //generateAllCombinations()
+        //render geneprintEntries as JSON
+        //return
+
         analysisConstraints = RModulesController.createAnalysisConstraints(params)
 
         List<String> ontologyTerms = extractOntologyTerms()
@@ -146,6 +152,36 @@ class GeneprintController {
             // Any non-undefined value will flag it as a mutation
             // TODO: differentiate between types of mutation?
             geneprintEntry["mutation"] = "1"
+        }
+    }
+
+    private void generateAllCombinations() {
+        def mappings = [
+                [key: "mrna",
+                 values: ["", "UPREGULATED", "DOWNREGULATED"]],
+                [key: "cna",
+                 values: ["", "LOSS", "DIPLOID", "GAINED", "AMPLIFIED"]],
+                [key: "rppa",
+                 values: ["", "UPREGULATED", "DOWNREGULATED"]],
+                [key: "mutation",
+                 values: ["", "1"]]]
+
+        int nPermutations = mappings.inject(1) { acc, val -> acc * val.values.size() }
+        for (i in 0..nPermutations-1) {
+            def entry = [gene: "TEST", sample: ""+i]
+            geneprintEntries << entry
+
+            // Add each type of mapping that has a value.
+            // The values are permutated based on the index.
+            int d = 1
+            mappings.each { mapping ->
+                int n = mapping.values.size()
+                def value = mapping.values[(i/d).intValue() % n]
+                if (value != "") {
+                    entry[mapping.key] = value
+                }
+                d *= n
+            }
         }
     }
 
