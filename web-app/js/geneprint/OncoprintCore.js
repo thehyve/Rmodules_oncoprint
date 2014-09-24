@@ -244,6 +244,18 @@ var OncoprintCore = function(utils, MemoSort) {
                 return true;
             }).remove();
 
+            var mrna = enter.append('rect')
+                .attr('y', function(d) { return vertical_pos(utils.get_attr(d)); })
+                .attr('height', dims.rect_height)
+                .attr('width', dims.rect_width)
+                .attr('stroke-width', 2)
+                .attr('stroke-opacity', 1)
+                .attr('stroke', function(d) { return d.mrna === "UPREGULATED" ? '#FF9999' : '#6699CC' })
+                .attr('fill', 'none');
+            mrna.filter(function(d) {
+                return d.mrna === undefined;
+            }).remove();
+            
             var sym = d3.svg.symbol().size(dims.rect_width * 3);
             var rppa = enter.append('path')
                 .attr('d', sym.type(function(d) {
@@ -258,17 +270,6 @@ var OncoprintCore = function(utils, MemoSort) {
                 return d.rppa === undefined;
             }).remove();
 
-            var mrna = enter.append('rect')
-                .attr('y', function(d) { return vertical_pos(utils.get_attr(d)); })
-                .attr('height', dims.rect_height)
-                .attr('width', dims.rect_width)
-                .attr('stroke-width', 2)
-                .attr('stroke-opacity', 1)
-                .attr('stroke', function(d) { return d.mrna === "UPREGULATED" ? '#FF9999' : '#6699CC' })
-                .attr('fill', 'none');
-            mrna.filter(function(d) {
-                return d.mrna === undefined;
-            }).remove();
         };
 
         update(data);
