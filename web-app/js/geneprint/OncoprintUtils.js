@@ -498,8 +498,8 @@ var OncoprintUtils = (function() {
                 DOWNREGULATED: "mRNA Downregulation"
             },
             rppa: {
-                UPREGULATED: "RPPA Upregulation",
-                DOWNREGULATED: "RPPA Downregulation"
+                UPREGULATED: "Protein Upregulation",
+                DOWNREGULATED: "Protein Downregulation"
             },
             mutation: "Mutation",
             fusion: "Fusion"
