@@ -250,12 +250,12 @@ var OncoprintCore = function(utils, MemoSort) {
                 .attr('width', dims.rect_width)
                 .attr('stroke-width', 2)
                 .attr('stroke-opacity', 1)
-                .attr('stroke', function(d) { return d.mrna === "UPREGULATED" ? '#FF9999' : '#6699CC' })
+                .attr('stroke', function(d) { return d.mrna === "UPREGULATED" ? '#AA0000' : '#6699CC' })
                 .attr('fill', 'none');
             mrna.filter(function(d) {
                 return d.mrna === undefined;
             }).remove();
-            
+
             var sym = d3.svg.symbol().size(dims.rect_width * 3);
             var rppa = enter.append('path')
                 .attr('d', sym.type(function(d) {
